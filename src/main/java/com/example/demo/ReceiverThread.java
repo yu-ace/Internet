@@ -16,21 +16,25 @@ public class ReceiverThread implements Runnable{
 
     @Override
     public void run() {
-        DatagramSocket mSocket = null;
-        try {
-            mSocket = new DatagramSocket(port);
-            byte[] receiveData = new byte[1024];
-            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            mSocket.receive(receivePacket);// 在接收到信息之前，一直保持阻塞状态
-            address = receivePacket.getAddress();
-            System.out.println("客户端说:" + new String(receiveData).trim());
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            DatagramSocket mSocket = null;
+            try {
+                mSocket = new DatagramSocket(port);
+                while (true) {
+                    byte[] receiveData = new byte[1024];
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    mSocket.receive(receivePacket);// 在接收到信息之前，一直保持阻塞状态
+                    address = receivePacket.getAddress();
+                    System.out.println("客户端说:" + new String(receiveData).trim());
+                }
+            } catch (SocketException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-    }
+
 
     public int getPort() {
         return port;

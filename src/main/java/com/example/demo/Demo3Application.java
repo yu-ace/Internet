@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.InputStream;
 import java.net.*;
 import java.util.Scanner;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -23,32 +24,31 @@ public class Demo3Application implements CommandLineRunner {
         if("1".equals(next)) {
             System.out.println("请输入监听的端口号：");
             int port = scanner.nextInt();
-            ReceiverThread t = new ReceiverThread(port);
-            new Thread(t).start();
+            ServerSocket serverSocket = new ServerSocket(port);
+            Socket connect = serverSocket.accept();
+            TCPReceiver tcpReceiver = new TCPReceiver(connect);
+            new Thread(tcpReceiver).start();
             while (true) {
                 System.out.println("请输入需要发生的信息：");
                 String message = scanner.next();
-                InetSocketAddress address = new InetSocketAddress(t.getAddress().getHostAddress() ,65525);
                 byte[] messageBytes = message.getBytes("utf8");
-                DatagramPacket sendPacket = new DatagramPacket(messageBytes, messageBytes.length, address);
-                DatagramSocket datagramSocket = new DatagramSocket();
-                datagramSocket.send(sendPacket);
+                connect.getOutputStream().write(messageBytes);
             }
         }else {
             System.out.println("请输入服务器IP地址：");
             String ip = scanner.next();
             System.out.println("请输入监听的端口号：");
             int port = scanner.nextInt();
-            ReceiverThread t = new ReceiverThread(65525);
-            new Thread(t).start();
+            System.out.println("请输入您的昵称：");
+            String nickName = scanner.next();
+            Socket socket = new Socket(ip,port);
+            TCPReceiver tcpReceiver = new TCPReceiver(socket);
+            new Thread(tcpReceiver).start();
             while (true) {
                 System.out.println("请输入需要发生的信息：");
                 String message = scanner.next();
-                InetSocketAddress address = new InetSocketAddress(ip, port);
                 byte[] messageBytes = message.getBytes("utf8");
-                DatagramPacket sendPacket = new DatagramPacket(messageBytes, messageBytes.length, address);
-                DatagramSocket datagramSocket = new DatagramSocket();
-                datagramSocket.send(sendPacket);
+                socket.getOutputStream().write(messageBytes);
             }
         }
     }
