@@ -1,6 +1,7 @@
-package com.example.demo;
+package com.example.demo.client;
 
 import com.alibaba.fastjson2.JSON;
+import com.example.demo.model.Message;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,7 @@ public class ClientTCPReceiver implements Runnable {
                 in.read(buffer);
                 String message = new String(buffer);
                 Message message1 = JSON.parseObject(message.trim(), Message.class);
-                if(message1.getNickName().equals("SYSTEM")){
+                if("SYSTEM".equals(message1.getNickName())){
                     System.out.printf("来自系统的消息： %s\n",message1.getMessage());
                 }else {
                     System.out.printf("来自 %s 的消息 ： %s\n",message1.getNickName(),message1.getMessage());
