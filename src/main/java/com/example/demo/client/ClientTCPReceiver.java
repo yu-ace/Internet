@@ -25,7 +25,12 @@ public class ClientTCPReceiver implements Runnable {
                 String message = new String(buffer);
                 Message message1 = JSON.parseObject(message.trim(), Message.class);
                 if("SYSTEM".equals(message1.getNickName())){
-                    System.out.printf("来自系统的消息： %s\n",message1.getMessage());
+                    if(message1.getMessage().equals("BYE")) {
+                        System.out.printf("服务器已关闭连接，%s再见\n",message1.getReceiverName());
+                        System.exit(0);
+                    }else{
+                        System.out.printf("来自系统的信息:%s\n",message1.getMessage());
+                    }
                 }else {
                     System.out.printf("来自 %s 的消息 ： %s\n",message1.getNickName(),message1.getMessage());
                 }

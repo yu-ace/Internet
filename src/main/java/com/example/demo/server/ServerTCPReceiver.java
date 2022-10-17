@@ -7,10 +7,13 @@ import com.example.demo.model.Message;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.List;
 
 public class ServerTCPReceiver implements Runnable {
 
     Session session = null;
+
+    boolean isRunning = true;
 
     public ServerTCPReceiver(Session session) {
         this.session = session;
@@ -18,7 +21,7 @@ public class ServerTCPReceiver implements Runnable {
 
     @Override
     public void run() {
-        while (true){
+        while (isRunning){
             try {
                 Message message1 = getMessage();
                 if(message1.getReceiverName().equals("SYSTEM")){
@@ -43,7 +46,7 @@ public class ServerTCPReceiver implements Runnable {
             // 用户不在线 发送错误信息
             System.out.printf("来自%s 发送给%s 消息为: %s %s\n", message1.getNickName(),
                     receiverName, message1.getMessage(),"但用户不在线，发送失败");
-            sendSystemMessage("用户不在线，发送失败");
+            sendSystemMessage("用户不在线，发送失败",receiverName);
         }else{
             // 直接转发
             Socket receiveSocket = sessionByNickName.getSocket();
@@ -54,17 +57,25 @@ public class ServerTCPReceiver implements Runnable {
     private void handleCommand(Message message1) {
         if(message1.getMessage().equals("LIST")){
             // 发送在线用户列表
+            List<String> onlineList = Demo3Application.sessionManager.getOnlineList();
+            String join = String.join("\n", onlineList);
+            sendSystemMessage(join,message1.getNickName());
         }else if(message1.getMessage().equals("LOGIN")) {
             this.session.setNickName(message1.getNickName());
         }else if(message1.getMessage().equals("LOGOUT")) {
-            System.out.printf("用户%s登录\n", message1.getNickName());
-            sendSystemMessage("再见！");
-            Demo3Application.sessionManager.removeSession(this.session);
+            isRunning = false;
+            System.out.printf("用户%s退出\n", message1.getNickName());
+            sendSystemMessage("BYE",message1.getNickName());
+            try {
+                this.session.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void sendSystemMessage(String message){
-        Message message2 = new Message("SYSTEM","xxx", message);
+    private void sendSystemMessage(String message,String receiver){
+        Message message2 = new Message("SYSTEM",receiver, message);
         try {
             session.getSocket().getOutputStream().write(JSON.toJSONString(message2).getBytes());
         } catch (IOException e) {
