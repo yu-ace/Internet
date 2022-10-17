@@ -66,7 +66,7 @@ public class ServerTCPReceiver implements Runnable {
     private void sendSystemMessage(String message){
         Message message2 = new Message("SYSTEM","xxx", message);
         try {
-            session.getSocket().getOutputStream().write(JSON.toJSONString(message2).getBytes("utf8"));
+            session.getSocket().getOutputStream().write(JSON.toJSONString(message2).getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,7 +74,7 @@ public class ServerTCPReceiver implements Runnable {
 
     private void sendMessage(Message message,Socket socket){
         try {
-            session.getSocket().getOutputStream().write(JSON.toJSONString(message).getBytes("utf8"));
+            socket.getOutputStream().write(JSON.toJSONString(message).getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
