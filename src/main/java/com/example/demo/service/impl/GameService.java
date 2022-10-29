@@ -56,6 +56,9 @@ public class GameService implements IGameService {
 
     @Override
     public Game getLastGame(int roomId) {
+        if (gameList.size() == 0) {
+            return null;
+        }
         return gameList.get(gameList.size() - 1);
     }
 
@@ -64,11 +67,11 @@ public class GameService implements IGameService {
         Session session = sessionManager.getSessionByUserId(userId);
         User user = session.getUser();
         Game game = this.getById(gameId);
-        Room room = roomService.getById(game.getRoomId());
         if (game == null) {
             session.sendSystemMessage("游戏ID不存在，无法下注！");
             return null;
         }
+        Room room = roomService.getById(game.getRoomId());
         if (user.getBalance() < amount) {
             session.sendSystemMessage("您的余额不足，无法下注！");
             return null;

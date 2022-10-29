@@ -118,8 +118,12 @@ public class Session implements Closeable, Runnable {
             gameService.endGame(message1.getGameId());
         } else if (message1.getCommand().equals("LAST_GAME")) {
             Game lastGame = gameService.getLastGame(message1.getRoomId());
-            String s = lastGame.getStatus() == 0 ? "等待下注" : "已开奖";
-            sendSystemMessage("最后的游戏ID为:" + lastGame.getId() + " 当前状态为:" + s);
+            if (lastGame == null) {
+                sendSystemMessage("当前无正在进行的游戏，请等待房主开启！");
+            } else {
+                String s = lastGame.getStatus() == 0 ? "等待下注" : "已开奖";
+                sendSystemMessage("最后的游戏ID为:" + lastGame.getId() + " 当前状态为:" + s);
+            }
         }
     }
 
