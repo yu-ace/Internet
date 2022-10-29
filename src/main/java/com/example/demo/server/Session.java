@@ -184,8 +184,9 @@ public class Session implements Closeable, Runnable {
         InputStream in = socket.getInputStream();
         in.read(buffer);
         String message = new String(buffer);
+        message = message.trim();
         System.out.println("接收到消息:" + message);
-        Message message1 = JSON.parseObject(message.trim(), Message.class);
+        Message message1 = JSON.parseObject(message, Message.class);
         return message1;
     }
 }
