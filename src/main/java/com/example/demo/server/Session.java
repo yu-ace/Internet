@@ -2,10 +2,7 @@ package com.example.demo.server;
 
 import com.alibaba.fastjson2.JSON;
 import com.example.demo.Demo3Application;
-import com.example.demo.model.Message;
-import com.example.demo.model.Room;
-import com.example.demo.model.TransactionRecord;
-import com.example.demo.model.User;
+import com.example.demo.model.*;
 import com.example.demo.service.IGameService;
 import com.example.demo.service.IRoomService;
 import com.example.demo.service.ITransactionService;
@@ -107,13 +104,22 @@ public class Session implements Closeable, Runnable {
             if (room.getOwnerId() != user.getId()) {
                 sendSystemMessage("您不是房主，无法创建游戏!");
             } else {
-                gameService.newGame(message1.getRoomId());
+                Game lastGame = gameService.getLastGame(message1.getRoomId());
+                if (lastGame != null && lastGame.getStatus() == 0) {
+                    sendSystemMessage("您有游戏正在进行中，无法创建新游戏！");
+                } else {
+                    gameService.newGame(message1.getRoomId());
+                }
             }
         } else if (message1.getCommand().equals("JOIN_GAME")) {
             gameService.joinGame(message1.getGameId(), user.getId(),
                     message1.getAmount(), message1.getResult());
         } else if (message1.getCommand().equals("END_GAME")) {
             gameService.endGame(message1.getGameId());
+        } else if (message1.getCommand().equals("LAST_GAME")) {
+            Game lastGame = gameService.getLastGame(message1.getRoomId());
+            String s = lastGame.getStatus() == 0 ? "等待下注" : "已开奖";
+            sendSystemMessage("最后的游戏ID为:" + lastGame.getId() + " 当前状态为:" + s);
         }
     }
 

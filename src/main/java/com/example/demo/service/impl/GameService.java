@@ -28,13 +28,14 @@ public class GameService implements IGameService {
 
     @Override
     public Game newGame(int roomId) {
+        Room room = roomService.getById(roomId);
+
         Game game = new Game();
         game.setId(Demo3Application.getId());
         game.setRoomId(roomId);
         game.setStatus(0);
         gameList.add(game);
 
-        Room room = roomService.getById(roomId);
         for (Integer playerId : room.getPlayer()) {
             Session session = sessionManager.getSessionByUserId(playerId);
             session.sendSystemMessage("房主已开启新一轮的游戏，欢迎下注,最新的游戏ID是:" + game.getId());

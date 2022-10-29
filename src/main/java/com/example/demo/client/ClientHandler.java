@@ -78,16 +78,10 @@ public class ClientHandler {
                     roomLoop(roomId);
                     break;
                 case "4":
-                    Message message5 = new Message();
-                    message5.setUserId(userId);
-                    message5.setCommand("GET_BALANCE");
-                    sendCmd2Server(message5);
+                    getBalance();
                     break;
                 case "5":
-                    Message message7 = new Message();
-                    message7.setUserId(userId);
-                    message7.setCommand("GET_LIST");
-                    sendCmd2Server(message7);
+                    getTransactions();
                     break;
                 case "q":
                     Message message6 = new Message();
@@ -100,6 +94,20 @@ public class ClientHandler {
                     throw new IllegalStateException("Unexpected value: " + cmd);
             }
         }
+    }
+
+    private void getTransactions() throws IOException {
+        Message message7 = new Message();
+        message7.setUserId(userId);
+        message7.setCommand("GET_LIST");
+        sendCmd2Server(message7);
+    }
+
+    private void getBalance() throws IOException {
+        Message message5 = new Message();
+        message5.setUserId(userId);
+        message5.setCommand("GET_BALANCE");
+        sendCmd2Server(message5);
     }
 
     private void roomLoop(int roomId) throws Exception {
@@ -135,6 +143,18 @@ public class ClientHandler {
                     message7.setCommand("END_GAME");
                     sendCmd2Server(message7);
                     break;
+                case "4":
+                    Message message8 = new Message();
+                    message8.setRoomId(roomId);
+                    message8.setCommand("LAST_GAME");
+                    sendCmd2Server(message8);
+                    break;
+                case "5":
+                    getBalance();
+                    break;
+                case "6":
+                    getTransactions();
+                    break;
             }
         }
     }
@@ -143,6 +163,9 @@ public class ClientHandler {
         System.out.println("输入1： 创建游戏");
         System.out.println("输入2： 下注");
         System.out.println("输入3： 结束游戏");
+        System.out.println("输入4： 查看正在进行的游戏");
+        System.out.println("输入5： 查询余额");
+        System.out.println("输入6： 查询交易信息");
         System.out.println("输入q： 退出房间");
     }
 
