@@ -2,12 +2,17 @@ package com.example.demo.service.impl;
 
 import com.example.demo.Demo3Application;
 import com.example.demo.model.Room;
+import com.example.demo.model.User;
+import com.example.demo.server.Session;
+import com.example.demo.server.SessionManager;
 import com.example.demo.service.IRoomService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RoomService implements IRoomService {
+
+    SessionManager sessionManager = SessionManager.getInstance();
 
     private static RoomService instance = new RoomService();
     List<Room> roomList = new ArrayList<>();
@@ -47,7 +52,12 @@ public class RoomService implements IRoomService {
 
     @Override
     public void joinRoom(int userId, int roomId) {
+        User user = sessionManager.getSessionByUserId(userId).getUser();
         Room room = getById(roomId);
         room.getPlayer().add(userId);
+        for (Integer integer : room.getPlayer()) {
+            Session playerSession = sessionManager.getSessionByUserId(integer);
+            playerSession.sendSystemMessage(user.getNickname() + " 进入了房间");
+        }
     }
 }

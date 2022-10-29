@@ -92,7 +92,13 @@ public class GameService implements IGameService {
         record.setResult(result);
 
         game.getRecordList().add(record);
-        return null;
+
+        for (Integer integer : room.getPlayer()) {
+            String rStr = result == -1 ? "小" : "大";
+            Session playerSession = sessionManager.getSessionByUserId(integer);
+            playerSession.sendSystemMessage(user.getNickname() + " 下注了， 押" + rStr + " 下注金额为:" + amount);
+        }
+        return game;
     }
 
     @Override
