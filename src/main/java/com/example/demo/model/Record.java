@@ -4,6 +4,12 @@ public class Record {
     int userId;
     int amount;
 
+    /**
+     * -1 小
+     * 1 大
+     */
+    int result;
+
     public int getUserId() {
         return userId;
     }
@@ -18,5 +24,13 @@ public class Record {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 }

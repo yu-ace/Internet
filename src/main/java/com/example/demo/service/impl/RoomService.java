@@ -7,24 +7,21 @@ import com.example.demo.service.IRoomService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomServiceMock implements IRoomService {
+public class RoomService implements IRoomService {
 
-    private static RoomServiceMock instance = new RoomServiceMock();
+    private static RoomService instance = new RoomService();
+    List<Room> roomList = new ArrayList<>();
 
-    private RoomServiceMock() {
-
+    private RoomService() {
     }
 
-    public static RoomServiceMock getInstance() {
+    public static RoomService getInstance() {
         return instance;
     }
 
     @Override
     public List<Room> getAllOpenRoom() {
-        Room room = createNewRoom(-1, "test", "test");
-        List<Room> s = new ArrayList<>();
-        s.add(room);
-        return s;
+        return roomList;
     }
 
     @Override
@@ -34,16 +31,23 @@ public class RoomServiceMock implements IRoomService {
         room.setId(Demo3Application.getId());
         room.setOwnerId(ownerId);
         room.setDescription(deccription);
+        roomList.add(room);
         return room;
     }
 
     @Override
     public Room getById(int roomId) {
+        for (Room room : roomList) {
+            if (room.getId() == roomId) {
+                return room;
+            }
+        }
         return null;
     }
 
     @Override
     public void joinRoom(int userId, int roomId) {
-
+        Room room = getById(roomId);
+        room.getPlayer().add(userId);
     }
 }

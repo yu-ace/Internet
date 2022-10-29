@@ -20,7 +20,7 @@ public class ClientHandler {
     }
 
 
-    private void clientHandle() throws IOException {
+    private void clientHandle() throws Exception {
         System.out.println("请输入服务器IP地址：");
         String ip = scanner.next();
         System.out.println("请输入监听的端口号：");
@@ -74,6 +74,8 @@ public class ClientHandler {
                     message4.setCommand("JOIN_ROOM");
                     message4.setRoomId(roomId);
                     sendCmd2Server(message4);
+
+                    roomLoop(roomId);
                     break;
                 case "4":
                     Message message5 = new Message();
@@ -98,6 +100,50 @@ public class ClientHandler {
                     throw new IllegalStateException("Unexpected value: " + cmd);
             }
         }
+    }
+
+    private void roomLoop(int roomId) throws Exception {
+        while (true) {
+            printRoomHelp();
+            String cmd = scanner.next();
+            switch (cmd) {
+                case "1":
+                    Message message5 = new Message();
+                    message5.setRoomId(roomId);
+                    message5.setCommand("NEW_GAME");
+                    sendCmd2Server(message5);
+                    break;
+                case "2":
+                    System.out.println("请输入游戏ID");
+                    int gameId = scanner.nextInt();
+                    System.out.println("请输入游戏大小，-1小 1大");
+                    int result = scanner.nextInt();
+                    System.out.println("请输入赌注");
+                    int amount = scanner.nextInt();
+                    Message message6 = new Message();
+                    message6.setGameId(gameId);
+                    message6.setCommand("JOIN_GAME");
+                    message6.setResult(result);
+                    message6.setAmount(amount);
+                    sendCmd2Server(message6);
+                    break;
+                case "3":
+                    System.out.println("请输入游戏ID");
+                    int gameId2 = scanner.nextInt();
+                    Message message7 = new Message();
+                    message7.setGameId(gameId2);
+                    message7.setCommand("END_GAME");
+                    sendCmd2Server(message7);
+                    break;
+            }
+        }
+    }
+
+    private void printRoomHelp() {
+        System.out.println("输入1： 创建游戏");
+        System.out.println("输入2： 下注");
+        System.out.println("输入3： 结束游戏");
+        System.out.println("输入q： 退出房间");
     }
 
 

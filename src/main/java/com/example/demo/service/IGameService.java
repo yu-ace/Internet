@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IGameService {
 
-    Game newGame(int roomId, int userId);
+    Game newGame(int roomId);
 
     List<Game> getGames(int roomId);
 
@@ -15,4 +15,6 @@ public interface IGameService {
     Game joinGame(int gameId, int userId, int amount, int result);
 
     Game endGame(int gameId);
+
+    Game getById(int gameId);
 }

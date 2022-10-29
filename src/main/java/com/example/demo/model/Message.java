@@ -8,6 +8,10 @@ public class Message {
     int gameId;
     String nickName;
 
+    int amount;
+
+    int result;
+
     public Message() {
     }
 
@@ -68,5 +72,21 @@ public class Message {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 }

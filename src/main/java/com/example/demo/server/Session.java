@@ -6,9 +6,12 @@ import com.example.demo.model.Message;
 import com.example.demo.model.Room;
 import com.example.demo.model.TransactionRecord;
 import com.example.demo.model.User;
+import com.example.demo.service.IGameService;
 import com.example.demo.service.IRoomService;
 import com.example.demo.service.ITransactionService;
-import com.example.demo.service.impl.RoomServiceMock;
+import com.example.demo.service.impl.GameService;
+import com.example.demo.service.impl.RoomService;
+import com.example.demo.service.impl.TransactionService;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -23,8 +26,9 @@ public class Session implements Closeable, Runnable {
 
     boolean isRunning = true;
 
-    IRoomService roomService = RoomServiceMock.getInstance();
-    ITransactionService transactionService;
+    IRoomService roomService = RoomService.getInstance();
+    ITransactionService transactionService = TransactionService.getInstance();
+    IGameService gameService = GameService.getInstance();
 
     public Session() {
     }
@@ -98,8 +102,21 @@ public class Session implements Closeable, Runnable {
             sendSystemMessage("您的余额为:" + user.getBalance());
         } else if (message1.getCommand().equals("GET_LIST")) {
             getTransaction(message1);
+        } else if (message1.getCommand().equals("NEW_GAME")) {
+            Room room = roomService.getById(message1.getRoomId());
+            if (room.getOwnerId() != user.getId()) {
+                sendSystemMessage("您不是房主，无法创建游戏!");
+            } else {
+                gameService.newGame(message1.getRoomId());
+            }
+        } else if (message1.getCommand().equals("JOIN_GAME")) {
+            gameService.joinGame(message1.getGameId(), user.getId(),
+                    message1.getAmount(), message1.getResult());
+        } else if (message1.getCommand().equals("END_GAME")) {
+            gameService.endGame(message1.getGameId());
         }
     }
+
 
     private void getTransaction(Message message1) {
         List<TransactionRecord> byUserId = transactionService.getByUserId(message1.getUserId());
@@ -162,7 +179,7 @@ public class Session implements Closeable, Runnable {
         sendCmd2Client(message);
     }
 
-    private void sendSystemMessage(String message) {
+    public void sendSystemMessage(String message) {
         Message message2 = new Message(-1, "MESSAGE", message);
         try {
             socket.getOutputStream().write(JSON.toJSONString(message2).getBytes());

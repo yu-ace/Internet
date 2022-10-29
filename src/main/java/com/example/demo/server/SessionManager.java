@@ -7,6 +7,16 @@ import java.util.List;
 
 public class SessionManager {
 
+    private static SessionManager instance = new SessionManager();
+
+    private SessionManager() {
+
+    }
+
+    public static SessionManager getInstance() {
+        return instance;
+    }
+
     List<Session> sessionList = new ArrayList<>();
 
     public List<User> getOnlineList() {
@@ -26,7 +36,7 @@ public class SessionManager {
         sessionList.add(session);
     }
 
-    public Session getSessionById(int userId) {
+    public Session getSessionByUserId(int userId) {
         for (Session session : sessionList) {
             if (session.getUser().getId() == userId) {
                 return session;

@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
@@ -8,7 +9,7 @@ public class Room {
     int ownerId;
     String roomName;
     String description;
-    List<Integer> player;
+    List<Integer> player = new ArrayList<>();
 
     public int getId() {
         return id;

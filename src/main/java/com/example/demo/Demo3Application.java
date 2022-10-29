@@ -22,7 +22,7 @@ public class Demo3Application implements CommandLineRunner {
         return ids;
     }
 
-    public static SessionManager sessionManager = null;
+    public static SessionManager sessionManager = SessionManager.getInstance();
 
     public static void main(String[] args) {
         SpringApplication.run(Demo3Application.class, args);
@@ -42,7 +42,6 @@ public class Demo3Application implements CommandLineRunner {
     }
 
     private void serverHandle(Scanner scanner) throws IOException {
-        sessionManager = new SessionManager();
         System.out.println("请输入监听的端口号：");
         int port = scanner.nextInt();
 
