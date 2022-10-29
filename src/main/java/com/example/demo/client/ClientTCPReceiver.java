@@ -24,15 +24,20 @@ public class ClientTCPReceiver implements Runnable {
                 in.read(buffer);
                 String message = new String(buffer);
                 Message message1 = JSON.parseObject(message.trim(), Message.class);
-                if("SYSTEM".equals(message1.getNickName())){
-                    if(message1.getMessage().equals("BYE")) {
-                        System.out.printf("服务器已关闭连接，%s再见\n",message1.getReceiverName());
+                switch (message1.getCommand()) {
+                    case "BYE":
+                        System.out.println("服务器已关闭连接，再见");
                         System.exit(0);
-                    }else{
-                        System.out.printf("来自系统的信息:%s\n",message1.getMessage());
-                    }
-                }else {
-                    System.out.printf("来自 %s 的消息 ： %s\n",message1.getNickName(),message1.getMessage());
+                        break;
+                    case "LOGIN_OK":
+                        int userId = message1.getUserId();
+                        ClientHandler.userId = userId;
+                        break;
+                    case "MESSAGE":
+                        System.out.println(message1.getContent());
+                        break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + message1.getCommand());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.example.demo.server;
 
-import java.io.IOException;
+import com.example.demo.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,16 +9,16 @@ public class SessionManager {
 
     List<Session> sessionList = new ArrayList<>();
 
-    public List<String> getOnlineList(){
-        List<String> a = new ArrayList<>();
+    public List<User> getOnlineList() {
+        List<User> a = new ArrayList<>();
         for (Session session : sessionList) {
-            a.add(session.getNickName());
+            a.add(session.getUser());
         }
         return a;
     }
 
 
-    public void removeSession(Session session){
+    public void removeSession(Session session) {
         sessionList.remove(session);
     }
 
@@ -25,12 +26,9 @@ public class SessionManager {
         sessionList.add(session);
     }
 
-    public Session getSessionByNickName(String nickName){
-        if(nickName==null && nickName.length()==0){
-            return null;
-        }
+    public Session getSessionById(int userId) {
         for (Session session : sessionList) {
-            if(nickName.equals(session.getNickName())){
+            if (session.getUser().getId() == userId) {
                 return session;
             }
         }
